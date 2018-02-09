@@ -3,8 +3,10 @@ using Content.Server.GameObjects.Components.Power;
 using Content.Server.GameObjects.Components.Interactable.Tools;
 using Content.Server.Interfaces.GameObjects;
 using SS14.Server;
+using SS14.Server.GameObjects;
 using SS14.Server.Interfaces;
 using SS14.Server.Interfaces.Chat;
+using SS14.Server.Interfaces.GameObjects;
 using SS14.Server.Interfaces.Maps;
 using SS14.Server.Interfaces.Player;
 using SS14.Server.Player;
@@ -100,6 +102,9 @@ namespace Content.Server
                         var newMap = mapMan.CreateMap(new MapId(2));
 
                         mapLoader.LoadBlueprint(newMap, new GridId(4), "Maps/Demo/DemoGrid.yaml");
+
+                        var grid = newMap.GetGrid(new GridId(4));
+                        BuildSpinner(grid);
                     }
                     var timeSpan = timing.RealTime - startTime;
                     Logger.Info($"Loaded map in {timeSpan.TotalMilliseconds:N2}ms.");
@@ -163,6 +168,21 @@ namespace Content.Server
                     }
                     break;
             }
+        }
+
+        private static void BuildSpinner(IMapGrid grid)
+        {
+            var entMan = IoCManager.Resolve<IServerEntityManager>();
+
+            var baseEnt = entMan.SpawnEntity("RedToolboxItem");
+            baseEnt.Name = "SpinnerBase";
+            baseEnt.GetComponent<IServerTransformComponent>().LocalPosition = new LocalCoordinates(-10, 10, grid);
+            baseEnt.GetComponent<PhysicsComponent>().AngularVelocity = 1.0f;
+
+            var mopEnt = entMan.SpawnEntity("MopItem");
+            mopEnt.Name = "SpinnerMop";
+            mopEnt.GetComponent<IServerTransformComponent>().LocalPosition = new LocalCoordinates(-9.5f, 9.5f, grid);
+            mopEnt.GetComponent<IServerTransformComponent>().AttachParent(baseEnt);
         }
     }
 }
