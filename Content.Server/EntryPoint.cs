@@ -179,10 +179,20 @@ namespace Content.Server
             baseEnt.GetComponent<IServerTransformComponent>().LocalPosition = new LocalCoordinates(-10, 10, grid);
             baseEnt.GetComponent<PhysicsComponent>().AngularVelocity = 1.0f;
 
-            var mopEnt = entMan.SpawnEntity("MopItem");
-            mopEnt.Name = "SpinnerMop";
-            mopEnt.GetComponent<IServerTransformComponent>().LocalPosition = new LocalCoordinates(-9.5f, 9.5f, grid);
-            mopEnt.GetComponent<IServerTransformComponent>().AttachParent(baseEnt);
+            var mopMid = entMan.SpawnEntity("MopItem");
+            mopMid.Name = "SpinnerMopMid";
+            mopMid.GetComponent<IServerTransformComponent>().LocalPosition = new LocalCoordinates(-9.5f, 9.5f, grid);
+            mopMid.GetComponent<IServerTransformComponent>().AttachParent(baseEnt);
+
+            var mopEnd = entMan.SpawnEntity("MopItem");
+            mopEnd.Name = "SpinnerMopEnd";
+            mopEnd.GetComponent<IServerTransformComponent>().LocalPosition = new LocalCoordinates(-8.5f, 8.5f, grid);
+            mopEnd.GetComponent<IServerTransformComponent>().AttachParent(mopMid);
+
+            var light = entMan.SpawnEntity("__engine_wall_light");
+            light.Name = "SpinnerLight";
+            light.GetComponent<IServerTransformComponent>().LocalPosition = new LocalCoordinates(-7.5f, 7.5f, grid);
+            light.GetComponent<IServerTransformComponent>().AttachParent(mopEnd);
         }
     }
 }
