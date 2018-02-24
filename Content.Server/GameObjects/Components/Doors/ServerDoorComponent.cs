@@ -1,14 +1,9 @@
-﻿using System;
-using Content.Server.Interfaces.GameObjects;
+﻿using Content.Server.GameObjects.EntitySystems;
 using Content.Shared.GameObjects;
 using SS14.Server.GameObjects;
 using SS14.Shared.GameObjects;
 using SS14.Shared.Interfaces.GameObjects;
-using SS14.Shared.Interfaces.GameObjects.Components;
-using SS14.Shared.Log;
 using SS14.Shared.Maths;
-using SS14.Shared.IoC;
-using Content.Server.GameObjects.EntitySystems;
 
 namespace Content.Server.GameObjects
 {
@@ -17,7 +12,7 @@ namespace Content.Server.GameObjects
         public bool Opened { get; private set; }
 
         private float OpenTimeCounter;
-        
+
         private CollidableComponent collidableComponent;
 
         public override void Initialize()
@@ -25,12 +20,10 @@ namespace Content.Server.GameObjects
             base.Initialize();
 
             collidableComponent = Owner.GetComponent<CollidableComponent>();
-            collidableComponent.OnBump += OnBump;
         }
 
         public override void OnRemove()
         {
-            collidableComponent.OnBump -= OnBump;
             collidableComponent = null;
         }
 
@@ -47,15 +40,17 @@ namespace Content.Server.GameObjects
             return true;
         }
 
-        private void OnBump(object sender, BumpEventArgs args)
+        public override void HandleMessage(object owner, ComponentMessage message)
         {
-            Logger.Info("Bump!");
-            if (Opened)
-            {
-                return;
-            }
+            base.HandleMessage(owner, message);
 
-            Open();
+            switch (message)
+            {
+                case BumpedEntMsg msg:
+                    if (!Opened)
+                        Open();
+                    break;
+            }
         }
 
         public void Open()
@@ -83,6 +78,7 @@ namespace Content.Server.GameObjects
         }
 
         private const float AUTO_CLOSE_DELAY = 5;
+
         public override void Update(float frameTime)
         {
             if (!Opened)
