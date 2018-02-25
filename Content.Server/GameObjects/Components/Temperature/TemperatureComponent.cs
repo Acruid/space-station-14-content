@@ -1,10 +1,9 @@
-﻿using Content.Server.Interfaces.GameObjects;
-using Content.Shared.Maths;
-using System;
-using SS14.Shared.GameObjects;
-using SS14.Shared.Utility;
-using YamlDotNet.RepresentationModel;
+﻿using System;
+using Content.Server.Interfaces.GameObjects;
 using Content.Shared.GameObjects;
+using Content.Shared.Maths;
+using SS14.Shared.GameObjects;
+using SS14.Shared.GameObjects.Serialization;
 
 namespace Content.Server.GameObjects
 {
@@ -24,24 +23,17 @@ namespace Content.Server.GameObjects
         //TODO: should be programmatic instead of how it currently is
         public float CurrentTemperature { get; private set; } = PhysicalConstants.ZERO_CELCIUS;
 
-        float _fireDamageThreshold = 0;
+        float _fireDamageThreshold;
         float _fireDamageCoefficient = 1;
 
-        float _secondsSinceLastDamageUpdate = 0;
+        float _secondsSinceLastDamageUpdate;
 
-        /// <inheritdoc />
-        public override void LoadParameters(YamlMappingNode mapping)
+        public override void ExposeData(EntitySerializer serializer)
         {
-            YamlNode node;
+            base.ExposeData(serializer);
 
-            if (mapping.TryGetNode("firedamagethreshold", out node))
-            {
-                _fireDamageThreshold = node.AsFloat();
-            }
-            if (mapping.TryGetNode("firedamagecoefficient", out node))
-            {
-                _fireDamageCoefficient = node.AsFloat();
-            }
+            serializer.DataField(ref _fireDamageThreshold, "firedamagethreshold", 0f);
+            serializer.DataField(ref _fireDamageCoefficient, "firedamagecoefficient", 1f);
         }
 
         /// <inheritdoc />
@@ -49,11 +41,11 @@ namespace Content.Server.GameObjects
         {
             base.Update(frameTime);
 
-            int fireDamage = (int)Math.Floor(Math.Max(0, CurrentTemperature - _fireDamageThreshold) / _fireDamageCoefficient);
+            var fireDamage = (int) Math.Floor(Math.Max(0, CurrentTemperature - _fireDamageThreshold) / _fireDamageCoefficient);
 
             _secondsSinceLastDamageUpdate += frameTime;
 
-            Owner.TryGetComponent<DamageableComponent>(out DamageableComponent component);
+            Owner.TryGetComponent(out DamageableComponent component);
 
             while (_secondsSinceLastDamageUpdate >= 1)
             {

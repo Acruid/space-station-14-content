@@ -1,9 +1,6 @@
-﻿using SS14.Shared.GameObjects;
-using SS14.Shared.Interfaces.GameObjects;
-using SS14.Shared.IoC;
-using SS14.Shared.Utility;
-using System;
-using YamlDotNet.RepresentationModel;
+﻿using System;
+using SS14.Shared.GameObjects;
+using SS14.Shared.GameObjects.Serialization;
 
 namespace Content.Server.GameObjects.Components.Power
 {
@@ -12,70 +9,77 @@ namespace Content.Server.GameObjects.Components.Power
     /// </summary>
     public class PowerStorageComponent : Component
     {
+        private bool _chargePowernet;
+        private float _capacity;
+        private float _charge;
+        private float _chargeRate;
+        private float _distributionRate;
+
+        /// <inheritdoc />
         public override string Name => "PowerStorage";
 
         /// <summary>
         /// Maximum amount of energy the internal battery can store
         /// </summary>
-        public float Capacity { get; private set; } = 10000; //arbitrary value replace
+        public float Capacity
+        {
+            get => _capacity;
+            private set => _capacity = value;
+        }
 
         /// <summary>
         /// Energy the battery is currently storing
         /// </summary>
-        public float Charge { get; private set; } = 0;
+        public float Charge
+        {
+            get => _charge;
+            private set => _charge = value;
+        }
 
         /// <summary>
         /// Rate at which energy will be taken to charge internal battery
         /// </summary>
-        public float ChargeRate { get; private set; } = 1000;
+        public float ChargeRate
+        {
+            get => _chargeRate;
+            private set => _chargeRate = value;
+        }
 
         /// <summary>
         /// Rate at which energy will be distributed to the powernet if needed
         /// </summary>
-        public float DistributionRate { get; private set; } = 1000;
-        
-        private bool _chargepowernet = false;
+        public float DistributionRate
+        {
+            get => _distributionRate;
+            private set => _distributionRate = value;
+        }
 
         /// <summary>
         /// Do we distribute power into the powernet from our stores if the powernet requires it?
         /// </summary>
         public bool ChargePowernet
         {
-            get => _chargepowernet;
+            get => _chargePowernet;
             set
             {
-                _chargepowernet = value;
+                _chargePowernet = value;
                 if (Owner.TryGetComponent(out PowerNodeComponent node))
                 {
-                    if (node.Parent != null)
-                        node.Parent.UpdateStorageType(this);
+                    node.Parent?.UpdateStorageType(this);
                 }
             }
         }
 
-
-        public override void LoadParameters(YamlMappingNode mapping)
+        /// <inheritdoc />
+        public override void ExposeData(EntitySerializer serializer)
         {
-            if (mapping.TryGetNode("Capacity", out YamlNode node))
-            {
-                Capacity = node.AsFloat();
-            }
-            if (mapping.TryGetNode("Charge", out node))
-            {
-                Charge = node.AsFloat();
-            }
-            if (mapping.TryGetNode("ChargeRate", out node))
-            {
-                ChargeRate = node.AsFloat();
-            }
-            if (mapping.TryGetNode("DistributionRate", out node))
-            {
-                DistributionRate = node.AsFloat();
-            }
-            if (mapping.TryGetNode("ChargePowernet", out node))
-            {
-                _chargepowernet = node.AsBool();
-            }
+            base.ExposeData(serializer);
+
+            serializer.DataField(ref _capacity, "Capacity", 10000);
+            serializer.DataField(ref _charge, "Charge", 0);
+            serializer.DataField(ref _chargeRate, "ChargeRate", 1000);
+            serializer.DataField(ref _distributionRate, "DistributionRate", 1000);
+            serializer.DataField(ref _chargePowernet, "ChargePowernet", false);
         }
 
         public override void OnAdd()
