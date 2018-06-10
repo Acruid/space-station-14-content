@@ -1,4 +1,5 @@
-﻿using Content.Server.GameObjects;
+﻿using System.IO;
+using Content.Server.GameObjects;
 using Content.Server.GameObjects.Components.Power;
 using Content.Server.GameObjects.Components.Interactable.Tools;
 using Content.Server.Interfaces.GameObjects;
@@ -25,6 +26,7 @@ using Content.Server.GameObjects.Components.Weapon.Ranged.Hitscan;
 using Content.Server.GameObjects.Components.Weapon.Ranged.Projectile;
 using Content.Server.GameObjects.Components.Projectiles;
 using Content.Server.GameObjects.Components.Weapon.Melee;
+using SS14.Shared.Interfaces.Configuration;
 
 namespace Content.Server
 {
@@ -117,17 +119,27 @@ namespace Content.Server
 
                     IoCManager.Resolve<IPlayerManager>().FallbackSpawnPoint = new LocalCoordinates(0, 0, mainGrid, mainMap);
 
+                    var configMan = IoCManager.Resolve<IConfigurationManager>();
                     var mapLoader = IoCManager.Resolve<IMapLoader>();
                     var mapMan = IoCManager.Resolve<IMapManager>();
 
-                    var startTime = timing.RealTime;
-                    {
-                        var newMap = mapMan.CreateMap(mainMap);
+                    var mapName = configMan.GetCVar<string>("game.mapname");
 
-                        mapLoader.LoadBlueprint(newMap, mainGrid, "Maps/stationstation.yml");
+                    if (!string.IsNullOrWhiteSpace(mapName))
+                    {
+                        var mapPath = Path.Combine("Maps", $"{mapName}.yml");
+
+                        var startTime = timing.RealTime;
+                        {
+                            var newMap = mapMan.CreateMap(mainMap);
+
+                            mapLoader.LoadBlueprint(newMap, mainGrid, mapPath);
+                        }
+                        var timeSpan = timing.RealTime - startTime;
+                        Logger.Info($"[MAP] Loaded map in {timeSpan.TotalMilliseconds:N2}ms.");
                     }
-                    var timeSpan = timing.RealTime - startTime;
-                    Logger.Info($"Loaded map in {timeSpan.TotalMilliseconds:N2}ms.");
+                    else
+                        Logger.Info("[MAP] No map specified.");
 
                     IoCManager.Resolve<IChatManager>().DispatchMessage(ChatChannel.Server, "Gamemode: Round loaded!");
                     break;

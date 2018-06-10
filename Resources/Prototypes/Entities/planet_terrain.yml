@@ -1,0 +1,26 @@
+- type: entity
+  id: planet_wall
+  name: "Planet Wall"
+  components:
+  - type: Transform
+  - type: Clickable
+  - type: Sprite
+    drawdepth: Walls
+    sprite: Tiles/planet_terrain.rsi
+    state: rock
+    scale: 0.5,0.5
+
+  - type: Icon
+    sprite: Tiles/planet_terrain.rsi
+    state: rock
+    scale: 0.5,0.5
+
+  - type: BoundingBox
+  - type: Collidable
+  - type: Occluder
+    sizeX: 32
+    sizeY: 32
+
+  placement:
+    snap:
+    - Wall
