@@ -1,0 +1,20 @@
+- type: entity
+  id: killer_balloon
+  name: Balloon
+  description: A harmless latex orb.
+  components:
+  - type: Sprite
+    texture: Objects/balloon_red.png
+    scale: "0.4, 0.4"
+    
+  - type: BoundingBox
+    aabb: "-0.2,-0.2,0.2,0.2"
+  - type: Physics
+    mass: 0.01
+  - type: Collidable
+    DebugColor: "#0000FF"
+    
+  - type: Damageable
+  - type: Destructible
+  
+  
