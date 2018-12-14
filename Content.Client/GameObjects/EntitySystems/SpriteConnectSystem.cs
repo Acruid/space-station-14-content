@@ -25,9 +25,10 @@ namespace Content.Client.GameObjects
         {
             base.Update(frameTime);
 
-            foreach (var entity in _dirtyEntities)
+            //Performance: This could be spread over multiple updates, or parallelized.
+            while (_dirtyEntities.Count > 0)
             {
-                CalculateNewSprite(entity);
+                CalculateNewSprite(_dirtyEntities.Dequeue());
             }
         }
 
@@ -54,17 +55,20 @@ namespace Content.Client.GameObjects
             var worldPos = position.ToWorld().Position;
             var snapSize = position.Grid.SnapSize;
 
+            // queue up the 4 ents adjacent to the entity that requested an update.
             AddValidEntities(EntityManager.GetEntitiesAt(worldPos + Vector2.UnitX * snapSize));
             AddValidEntities(EntityManager.GetEntitiesAt(worldPos + Vector2.UnitX * -snapSize));
             AddValidEntities(EntityManager.GetEntitiesAt(worldPos + Vector2.UnitY * snapSize));
             AddValidEntities(EntityManager.GetEntitiesAt(worldPos + Vector2.UnitY * -snapSize));
-            
         }
 
         private void AddValidEntities(IEnumerable<IEntity> ents)
         {
             foreach (var entity in ents)
             {
+                if(!entity.IsValid())
+                    continue;
+
                 if (entity.HasComponent<SpriteConnectCardinalComponent>() && entity.HasComponent<ISpriteComponent>())
                 {
                     _dirtyEntities.Enqueue(entity);
@@ -74,7 +78,45 @@ namespace Content.Client.GameObjects
 
         private void CalculateNewSprite(IEntity entity)
         {
-            //TODO: Implement me!
+            if(!entity.IsValid() ||
+               !entity.HasComponent<SpriteConnectCardinalComponent>() ||
+               !entity.TryGetComponent(out ISpriteComponent spriteComp))
+                return;
+
+            var position = entity.Transform.LocalPosition;
+            if (!position.IsValidLocation())
+            {
+                Logger.WarningS(nameof(SpriteConnectSystem), $"Entity position not valid! ent={entity}");
+                return;
+            }
+
+            var worldPos = position.ToWorld().Position;
+            var snapSize = position.Grid.SnapSize;
+
+            var result = MatchingEntity(EntityManager.GetEntitiesAt(worldPos + Vector2.UnitX * snapSize), spriteComp.BaseRSIPath);
+            spriteComp.LayerSetVisible(1, result);
+            result = MatchingEntity(EntityManager.GetEntitiesAt(worldPos + Vector2.UnitX * -snapSize), spriteComp.BaseRSIPath);
+            spriteComp.LayerSetVisible(3, result);
+            result = MatchingEntity(EntityManager.GetEntitiesAt(worldPos + Vector2.UnitY * snapSize), spriteComp.BaseRSIPath);
+            spriteComp.LayerSetVisible(2, result);
+            result = MatchingEntity(EntityManager.GetEntitiesAt(worldPos + Vector2.UnitY * -snapSize), spriteComp.BaseRSIPath);
+            spriteComp.LayerSetVisible(4, result);
+        }
+
+        private static bool MatchingEntity(IEnumerable<IEntity> entities, string rsiPath)
+        {
+            foreach (var entity in entities)
+            {
+                if (entity.IsValid() && entity.HasComponent<SpriteConnectCardinalComponent>() && entity.TryGetComponent(out ISpriteComponent spriteComp))
+                {
+                    var otherGfxPath = spriteComp.BaseRSIPath;
+
+                    if (otherGfxPath == rsiPath)
+                        return true;
+                }
+            }
+
+            return false;
         }
     }
 

@@ -4,6 +4,7 @@ namespace Content.Client.GameObjects
 {
     public class SpriteConnectCardinalComponent : Component
     {
+        /// <inheritdoc />
         public override string Name => "SpriteConnectedCardinal";
 
         /// <inheritdoc />
