@@ -7,10 +7,21 @@
   - type: BoundingBox
   - type: Sprite
     drawdepth: BelowFloor
-    color: Red
-    texture: Objects/eightdirwire.png
+    sprite: Objects/wire.rsi
+    layers:
+    - state: wire_0
+    - state: wire_1
+      visible: false
+    - state: wire_2
+      visible: false
+    - state: wire_4
+      visible: false
+    - state: wire_8
+      visible: false
   - type: Icon
-    texture: Objects/eightdirwire.png
+    sprite: Objects/wire.rsi
+    state: icon
+  - type: SpriteConnectedCardinal
   - type: PowerTransfer
 
   snap:

@@ -57,6 +57,8 @@ namespace Content.Server
 
             var factory = IoCManager.Resolve<IComponentFactory>();
 
+            factory.RegisterIgnore("SpriteConnectedCardinal");
+
             factory.Register<HandsComponent>();
             factory.RegisterReference<HandsComponent, IHandsComponent>();
 

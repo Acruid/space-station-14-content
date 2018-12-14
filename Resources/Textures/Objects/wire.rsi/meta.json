@@ -1,0 +1,45 @@
+{
+    "version": 1,
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "icon",
+            "select": [],
+            "flags": {},
+            "directions": 1
+        },
+        {
+            "name": "wire_0",
+            "select": [],
+            "flags": {},
+            "directions": 1
+        },
+        {
+            "name": "wire_1",
+            "select": [],
+            "flags": {},
+            "directions": 1
+        },
+        {
+            "name": "wire_2",
+            "select": [],
+            "flags": {},
+            "directions": 1
+        },
+        {
+            "name": "wire_4",
+            "select": [],
+            "flags": {},
+            "directions": 1
+        },
+        {
+            "name": "wire_8",
+            "select": [],
+            "flags": {},
+            "directions": 1
+        }
+    ]
+}
