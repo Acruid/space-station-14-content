@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Server.GameObjects;
@@ -298,7 +298,7 @@ namespace Content.Server.GameTicking
             var startTime = _gameTiming.RealTime;
             var grid = _mapLoader.LoadBlueprint(newMap, MapFile);
 
-            _spawnPoint = new GridCoordinates(Vector2.Zero, grid);
+            _spawnPoint = new GridCoordinates(Vector2.Zero, grid.Index);
 
             var timeSpan = _gameTiming.RealTime - startTime;
             Logger.InfoS("ticker", $"Loaded map in {timeSpan.TotalMilliseconds:N2}ms.");

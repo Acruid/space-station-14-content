@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using Content.Server.GameObjects.Components.Materials;
-using Content.Server.GameObjects.Components.Sound;
+﻿using System;
 using Content.Server.GameObjects.Components.Stack;
 using Content.Server.GameObjects.EntitySystems;
 using Content.Shared.Construction;
 using Content.Shared.GameObjects.Components.Construction;
-using SS14.Server.GameObjects;
 using SS14.Server.GameObjects.EntitySystems;
 using SS14.Server.Interfaces.GameObjects;
 using SS14.Shared.GameObjects;
 using SS14.Shared.Interfaces.GameObjects;
 using SS14.Shared.Interfaces.GameObjects.Components;
+using SS14.Shared.Interfaces.Map;
 using SS14.Shared.Interfaces.Network;
 using SS14.Shared.IoC;
 using SS14.Shared.Map;
@@ -34,13 +31,13 @@ namespace Content.Server.GameObjects.Components.Construction
             }
         }
 
-        void TryStartStructureConstruction(GridCoordinates loc, string prototypeName, Angle angle, int ack)
+        private void TryStartStructureConstruction(GridCoordinates loc, string prototypeName, Angle angle, int ack)
         {
             var protoMan = IoCManager.Resolve<IPrototypeManager>();
             var prototype = protoMan.Index<ConstructionPrototype>(prototypeName);
 
             var transform = Owner.GetComponent<ITransformComponent>();
-            if (!loc.InRange(transform.GridPosition, InteractionSystem.INTERACTION_RANGE))
+            if (!loc.InRange(IoCManager.Resolve<IMapManager>(), transform.GridPosition, InteractionSystem.INTERACTION_RANGE))
             {
                 return;
             }

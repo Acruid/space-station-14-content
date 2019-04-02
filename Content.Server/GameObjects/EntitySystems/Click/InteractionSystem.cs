@@ -1,6 +1,4 @@
-﻿using System;
-using Content.Server.Interfaces.GameObjects;
-using SS14.Server.Interfaces.GameObjects;
+﻿using Content.Server.Interfaces.GameObjects;
 using SS14.Shared.GameObjects;
 using SS14.Shared.GameObjects.Systems;
 using SS14.Shared.Interfaces.GameObjects;
@@ -10,10 +8,11 @@ using Content.Shared.Input;
 using SS14.Shared.Input;
 using SS14.Shared.Log;
 using SS14.Shared.Map;
-using SS14.Server.GameObjects;
 using SS14.Server.GameObjects.EntitySystems;
 using SS14.Server.Interfaces.Player;
 using SS14.Shared.Interfaces.GameObjects.Components;
+using SS14.Shared.Interfaces.Map;
+using SS14.Shared.IoC;
 using SS14.Shared.Players;
 
 namespace Content.Server.GameObjects.EntitySystems
@@ -128,7 +127,7 @@ namespace Content.Server.GameObjects.EntitySystems
             if(playerEnt == null || !playerEnt.IsValid())
                 return;
 
-            if (!playerEnt.Transform.GridPosition.InRange(used.Transform.GridPosition, INTERACTION_RANGE))
+            if (!playerEnt.Transform.GridPosition.InRange(IoCManager.Resolve<IMapManager>(), used.Transform.GridPosition, INTERACTION_RANGE))
                 return;
 
             activateComp.Activate(playerEnt);
@@ -137,7 +136,7 @@ namespace Content.Server.GameObjects.EntitySystems
         private void HandleUseItemInHand(ICommonSession session, GridCoordinates coords, EntityUid uid)
         {
             // client sanitization
-            if(!coords.IsValidLocation())
+            if(!IoCManager.Resolve<IMapManager>().IsValidLocation(coords))
             {
                 Logger.InfoS("system.interaction", $"Invalid Coordinates: client={session}, coords={coords}");
                 return;
@@ -164,7 +163,7 @@ namespace Content.Server.GameObjects.EntitySystems
                 return;
             }
             //Verify player is on the same map as the entity he clicked on
-            else if (coordinates.MapID != playerTransform.MapID)
+            else if (IoCManager.Resolve<IMapManager>().GetGrid(coordinates.GridId).ParentMap.Index != playerTransform.MapID)
             {
                 Logger.Warning(string.Format("Player named {0} clicked on a map he isn't located on", player.Name));
                 return;

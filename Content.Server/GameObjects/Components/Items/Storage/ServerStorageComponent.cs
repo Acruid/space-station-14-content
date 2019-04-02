@@ -1,5 +1,4 @@
 ﻿using Content.Server.GameObjects.EntitySystems;
-using Content.Server.Interfaces.GameObjects;
 using Content.Shared.GameObjects.Components.Storage;
 using SS14.Server.GameObjects;
 using SS14.Server.GameObjects.Components.Container;
@@ -15,7 +14,7 @@ using SS14.Shared.Log;
 using SS14.Shared.Serialization;
 using System.Collections.Generic;
 using Content.Shared.Interfaces;
-using SS14.Shared.GameObjects.EntitySystemMessages;
+using SS14.Shared.Interfaces.Map;
 using SS14.Shared.ViewVariables;
 
 namespace Content.Server.GameObjects
@@ -268,7 +267,7 @@ namespace Content.Server.GameObjects
                     var ourtransform = Owner.GetComponent<ITransformComponent>();
                     var playertransform = playerentity.GetComponent<ITransformComponent>();
 
-                    if (playertransform.GridPosition.InRange(ourtransform.GridPosition, 2)
+                    if (playertransform.GridPosition.InRange(IoCManager.Resolve<IMapManager>(), ourtransform.GridPosition, 2)
                         && (ourtransform.IsMapTransform || playertransform.ContainsEntity(ourtransform)))
                     {
                         var remove = (RemoveEntityMessage)message;

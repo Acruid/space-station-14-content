@@ -1,17 +1,14 @@
-﻿using System;
-using SS14.Shared.GameObjects;
+﻿using SS14.Shared.GameObjects;
 using Content.Server.GameObjects.EntitySystems;
 using SS14.Shared.Interfaces.GameObjects;
 using SS14.Shared.Map;
 using SS14.Shared.IoC;
-using SS14.Server.GameObjects;
 using SS14.Shared.Maths;
 using SS14.Server.Interfaces.GameObjects;
-using SS14.Shared.Interfaces.Timing;
-using SS14.Shared.GameObjects.EntitySystemMessages;
 using SS14.Shared.Serialization;
 using SS14.Shared.Interfaces.GameObjects.Components;
 using Content.Shared.GameObjects;
+using SS14.Shared.Interfaces.Map;
 
 namespace Content.Server.GameObjects.Components.Weapon.Melee
 {
@@ -34,9 +31,10 @@ namespace Content.Server.GameObjects.Components.Weapon.Melee
 
         void IAfterAttack.Afterattack(IEntity user, GridCoordinates clicklocation, IEntity attacked)
         {
-            var location = user.GetComponent<ITransformComponent>().GridPosition;
-            var angle = new Angle(clicklocation.ToWorld().Position - location.ToWorld().Position);
-            var entities = IoCManager.Resolve<IServerEntityManager>().GetEntitiesInArc(user.GetComponent<ITransformComponent>().GridPosition, Range, angle, ArcWidth);
+            var mapManager = IoCManager.Resolve<IMapManager>();
+            var gridPosition = user.GetComponent<ITransformComponent>().GridPosition;
+            var angle = new Angle(clicklocation.ToWorld(mapManager).Position - gridPosition.ToWorld(mapManager).Position);
+            var entities = IoCManager.Resolve<IServerEntityManager>().GetEntitiesInArc(gridPosition, Range, angle, ArcWidth);
 
             foreach (var entity in entities)
             {

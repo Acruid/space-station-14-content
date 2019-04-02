@@ -11,7 +11,7 @@ using SS14.Shared.GameObjects;
 using SS14.Shared.GameObjects.EntitySystemMessages;
 using SS14.Shared.GameObjects.Systems;
 using SS14.Shared.Input;
-using SS14.Shared.Interfaces.GameObjects.Components;
+using SS14.Shared.Interfaces.Map;
 using SS14.Shared.Interfaces.Timing;
 using SS14.Shared.IoC;
 using SS14.Shared.Map;
@@ -117,7 +117,7 @@ namespace Content.Server.GameObjects.EntitySystems
 
             var transform = ent.Transform;
 
-            if (transform.GridPosition.InRange(coords, InteractionSystem.INTERACTION_RANGE))
+            if (transform.GridPosition.InRange(IoCManager.Resolve<IMapManager>(), coords, InteractionSystem.INTERACTION_RANGE))
             {
                 handsComp.Drop(handsComp.ActiveIndex, coords);
             }
@@ -184,7 +184,7 @@ namespace Content.Server.GameObjects.EntitySystems
             projComp.IgnoreEntity(plyEnt);
 
             var transform = plyEnt.Transform;
-            var dirVec = (coords.ToWorld().Position - transform.WorldPosition).Normalized;
+            var dirVec = (coords.ToWorld(IoCManager.Resolve<IMapManager>()).Position - transform.WorldPosition).Normalized;
 
             if (!throwEnt.TryGetComponent(out PhysicsComponent physComp))
             {

@@ -1,10 +1,10 @@
-using Content.Client.Interfaces.Parallax;
+﻿using Content.Client.Interfaces.Parallax;
 using SS14.Client.Graphics;
 using SS14.Client.Graphics.Drawing;
 using SS14.Client.Graphics.Overlays;
 using SS14.Client.Graphics.Shaders;
 using SS14.Client.Interfaces.Graphics.ClientEye;
-using SS14.Client.Interfaces.Graphics.Overlays;
+using SS14.Shared.Interfaces.Map;
 using SS14.Shared.IoC;
 using SS14.Shared.Maths;
 using SS14.Shared.Prototypes;
@@ -17,6 +17,7 @@ namespace Content.Client.Parallax
         [Dependency] private readonly IParallaxManager _parallaxManager;
         [Dependency] private readonly IEyeManager _eyeManager;
         [Dependency] private readonly IPrototypeManager _prototypeManager;
+        [Dependency] private readonly IMapManager _mapManager;
 #pragma warning restore 649
 
         public override bool AlwaysDirty => true;
@@ -49,7 +50,7 @@ namespace Content.Client.Parallax
             }
 
             var (sizeX, sizeY) = _parallaxTexture.Size;
-            var (posX, posY) = _eyeManager.ScreenToWorld(Vector2.Zero).ToWorld().Position;
+            var (posX, posY) = _eyeManager.ScreenToWorld(Vector2.Zero).ToWorld(_mapManager).Position;
             var (ox, oy) = (Vector2i) new Vector2(-posX / Slowness, posY / Slowness);
             ox = MathHelper.Mod(ox, sizeX);
             oy = MathHelper.Mod(oy, sizeY);

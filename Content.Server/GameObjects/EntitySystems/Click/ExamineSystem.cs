@@ -8,6 +8,7 @@ using SS14.Shared.GameObjects;
 using SS14.Shared.GameObjects.Systems;
 using SS14.Shared.Input;
 using SS14.Shared.Interfaces.GameObjects.Components;
+using SS14.Shared.Interfaces.Map;
 using SS14.Shared.IoC;
 using SS14.Shared.Log;
 using SS14.Shared.Map;
@@ -49,7 +50,7 @@ namespace Content.Server.GameObjects.EntitySystems
             }
 
             //Verify player is on the same map as the entity he clicked on
-            if (coords.MapID != playerTransform.MapID)
+            if (IoCManager.Resolve<IMapManager>().GetGrid(coords.GridId).ParentMap.Index != playerTransform.MapID)
             {
                 Logger.WarningS("sys.examine", $"Player named {session.Name} clicked on a map he isn't located on");
                 return;
