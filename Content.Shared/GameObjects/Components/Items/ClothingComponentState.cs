@@ -9,7 +9,7 @@ namespace Content.Shared.GameObjects.Components.Items
     {
         public string ClothingEquippedPrefix { get; set; }
 
-        public ClothingComponentState(string clothingEquippedPrefix, string equippedPrefix) : base(equippedPrefix, ContentNetIDs.CLOTHING)
+        public ClothingComponentState(string clothingEquippedPrefix, string equippedPrefix) : base(equippedPrefix, ContentNetIDs.CLOTHING, 1, 1)
         {
             ClothingEquippedPrefix = clothingEquippedPrefix;
         }

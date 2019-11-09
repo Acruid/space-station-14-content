@@ -150,18 +150,18 @@ namespace Content.Server.GameObjects.EntitySystems
                 return false;
 
             // pop off an item, or throw the single item in hand.
-            if (!throwEnt.TryGetComponent(out StackComponent stackComp) || stackComp.Count < 2)
+            if (!throwEnt.TryGetComponent(out ItemComponent itemComp) || itemComp.StackCount < 2)
             {
                 handsComp.Drop(handsComp.ActiveIndex);
             }
             else
             {
-                stackComp.Use(1);
+                itemComp.Use(1);
                 throwEnt = throwEnt.EntityManager.SpawnEntityAt(throwEnt.Prototype.ID, plyEnt.Transform.GridPosition);
-
+                
                 // can only throw one item at a time, regardless of what the prototype stack size is.
-                if (throwEnt.TryGetComponent<StackComponent>(out var newStackComp))
-                    newStackComp.Count = 1;
+                if (throwEnt.TryGetComponent<ItemComponent>(out var newItemComp))
+                    newItemComp.StackCount = 1;
             }
 
             if (!throwEnt.TryGetComponent(out CollidableComponent colComp))

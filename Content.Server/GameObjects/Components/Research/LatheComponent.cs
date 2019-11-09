@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Content.Server.GameObjects.Components.Stack;
 using Content.Server.GameObjects.EntitySystems;
 using Content.Shared.GameObjects.Components.Materials;
@@ -122,7 +122,8 @@ namespace Content.Server.GameObjects.Components.Research
 
             var multiplier = 1;
 
-            if (eventArgs.AttackWith.TryGetComponent(out StackComponent stack)) multiplier = stack.Count;
+            if (eventArgs.AttackWith.TryGetComponent(out ItemComponent itemComp))
+                multiplier = itemComp.StackCount;
 
             var totalAmount = 0;
 

@@ -21,8 +21,10 @@ namespace Content.Client.GameObjects
         public override Type StateType => typeof(ItemComponentState);
 
         [ViewVariables] protected ResourcePath RsiPath;
-
         private string _equippedPrefix;
+
+        private int _stackCount = 1;
+        private int _stackMax = 1;
 
         [ViewVariables(VVAccess.ReadWrite)]
         public string EquippedPrefix
@@ -30,6 +32,15 @@ namespace Content.Client.GameObjects
             get => _equippedPrefix;
             set => _equippedPrefix = value;
         }
+
+        [ViewVariables]
+        public int StackCount => _stackCount;
+
+        [ViewVariables]
+        public int StackMax => _stackMax;
+
+        [ViewVariables]
+        public int StackAvailableSpace => _stackMax - _stackCount;
 
         public (RSI rsi, RSI.StateId stateId)? GetInHandStateInfo(string hand)
         {
@@ -54,6 +65,9 @@ namespace Content.Client.GameObjects
 
             serializer.DataFieldCached(ref RsiPath, "sprite", null);
             serializer.DataFieldCached(ref _equippedPrefix, "prefix", null);
+
+            serializer.DataField(ref _stackMax, "stkCount", 1);
+            serializer.DataField(ref _stackCount, "stkMax", 1);
         }
 
         protected RSI GetRSI()
@@ -69,6 +83,8 @@ namespace Content.Client.GameObjects
 
             var itemComponentState = (ItemComponentState)curState;
             EquippedPrefix = itemComponentState.EquippedPrefix;
+            _stackCount = itemComponentState.StackCount;
+            _stackMax = itemComponentState.StackMax;
         }
     }
 }

@@ -4,6 +4,7 @@ using Content.Server.GameObjects.Components.Interactable.Tools;
 using Content.Server.GameObjects.Components.Stack;
 using Content.Server.GameObjects.EntitySystems;
 using Content.Shared.Construction;
+using Content.Shared.GameObjects.Components.Materials;
 using Robust.Server.GameObjects;
 using Robust.Server.GameObjects.EntitySystems;
 using Robust.Server.Interfaces.GameObjects;
@@ -105,9 +106,10 @@ namespace Content.Server.GameObjects.Components.Construction
             switch (step)
             {
                 case ConstructionStepMaterial matStep:
-                    if (!slapped.TryGetComponent(out StackComponent stack)
-                     || !MaterialStackValidFor(matStep, stack)
-                     || !stack.Use(matStep.Amount))
+                    if (!slapped.TryGetComponent(out MaterialComponent materialComp)
+                     || !MaterialStackValidFor(matStep, materialComp)
+                     || !slapped.TryGetComponent(out ItemComponent itemComp)
+                     || !itemComp.Use(matStep.Amount))
                     {
                         return false;
                     }
@@ -168,18 +170,18 @@ namespace Content.Server.GameObjects.Components.Construction
             }
         }
 
-        private static Dictionary<StackType, ConstructionStepMaterial.MaterialType> StackTypeMap
-        = new Dictionary<StackType, ConstructionStepMaterial.MaterialType>
+        private static Dictionary<string, MaterialType> StackTypeMap
+        = new Dictionary<string, MaterialType>
         {
-            { StackType.Cable, MaterialType.Cable },
-            { StackType.Glass, MaterialType.Glass },
-            { StackType.Metal, MaterialType.Metal }
+            { "cable", MaterialType.Cable },
+            { "glass", MaterialType.Glass },
+            { "steel", MaterialType.Metal }
         };
 
         // Really this should check the actual materials at play..
-        public static bool MaterialStackValidFor(ConstructionStepMaterial step, StackComponent stack)
+        public static bool MaterialStackValidFor(ConstructionStepMaterial step, MaterialComponent material)
         {
-            return StackTypeMap.TryGetValue((StackType)stack.StackType, out var should) && should == step.Material;
+            return StackTypeMap.TryGetValue(material.MaterialTypes[MaterialKeys.Stack].ID, out var should) && should == step.Material;
         }
     }
 }

@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using Content.Server.GameObjects.Components.Stack;
 using Content.Server.GameObjects.EntitySystems;
 using Content.Shared.Construction;
 using Content.Shared.GameObjects.Components.Construction;
+using Content.Shared.GameObjects.Components.Materials;
 using Robust.Server.GameObjects.EntitySystems;
 using Robust.Server.Interfaces.GameObjects;
 using Robust.Shared.GameObjects;
@@ -67,12 +68,12 @@ namespace Content.Server.GameObjects.Components.Construction
                 return;
             }
 
-            if (!activeHand.TryGetComponent(out StackComponent stack) || !ConstructionComponent.MaterialStackValidFor(matStep, stack))
+            if (!activeHand.TryGetComponent(out MaterialComponent materialComp) || !ConstructionComponent.MaterialStackValidFor(matStep, materialComp))
             {
                 return;
             }
 
-            if (!stack.Use(matStep.Amount))
+            if (!activeHand.TryGetComponent(out ItemComponent itemComp) || !itemComp.Use(matStep.Amount))
             {
                 return;
             }

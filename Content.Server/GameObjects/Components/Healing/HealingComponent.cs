@@ -30,9 +30,9 @@ namespace Content.Server.GameObjects.Components.Weapon.Melee
             }
 
             if (!eventArgs.Attacked.TryGetComponent(out DamageableComponent damagecomponent)) return;
-            if (Owner.TryGetComponent(out StackComponent stackComponent))
+            if (Owner.TryGetComponent(out ItemComponent itemComponent))
             {
-                if (!stackComponent.Use(1))
+                if (!itemComponent.Use(1))
                 {
                     Owner.Delete();
                     return;
@@ -48,9 +48,9 @@ namespace Content.Server.GameObjects.Components.Weapon.Melee
         bool IUse.UseEntity(UseEntityEventArgs eventArgs)
         {
             if (!eventArgs.User.TryGetComponent(out DamageableComponent damagecomponent)) return false;
-            if (Owner.TryGetComponent(out StackComponent stackComponent))
+            if (Owner.TryGetComponent(out ItemComponent itemComponent))
             {
-                if (!stackComponent.Use(1))
+                if (!itemComponent.Use(1))
                 {
                     Owner.Delete();
                     return false;
