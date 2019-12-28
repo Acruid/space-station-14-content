@@ -25,7 +25,8 @@ namespace Content.Server.GameObjects.Components.Power
             if(!_mapManager.TryGetGrid(eventArgs.ClickLocation.GridID, out var grid))
                 return;
 
-            var snapPos = grid.SnapGridCellFor(eventArgs.ClickLocation.ToWorld(_mapManager), SnapGridOffset.Center);
+            var mapCoordinates = eventArgs.ClickLocation.ToWorld(_mapManager, _entityManager);
+            var snapPos = grid.SnapGridCellFor(mapCoordinates, SnapGridOffset.Center);
             var snapCell = grid.GetSnapGridCell(snapPos, SnapGridOffset.Center);
 
             if(grid.GetTileRef(snapPos).Tile.IsEmpty)

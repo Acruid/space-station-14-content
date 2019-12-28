@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Content.Client.GameObjects.Components;
-using Content.Client.GameObjects.EntitySystems;
 using Content.Shared.GameObjects;
 using Robust.Client.GameObjects.EntitySystems;
 using Robust.Client.Interfaces.GameObjects;
@@ -72,7 +71,7 @@ namespace Content.Client.State
             {
                 var playerPos = playerManager.LocalPlayer.ControlledEntity.Transform.GridPosition;
                 var entityPos = entityToClick.Transform.GridPosition;
-                var distance = playerPos.Distance(_mapManager, entityPos);
+                var distance = playerPos.Distance(_mapManager, _entityManager, entityPos);
                 inRange = distance <= VerbUtility.InteractionRange;
             }
 
@@ -109,7 +108,7 @@ namespace Content.Client.State
         public IList<IEntity> GetEntitiesUnderPosition(GridCoordinates coordinates)
         {
             // Find all the entities intersecting our click
-            var worldCoords = coordinates.ToWorld(_mapManager);
+            var worldCoords = coordinates.ToWorld(_mapManager, _entityManager);
             var entities = _entityManager.GetEntitiesIntersecting(_mapManager.GetGrid(coordinates.GridID).ParentMapId,
                 worldCoords.Position);
 

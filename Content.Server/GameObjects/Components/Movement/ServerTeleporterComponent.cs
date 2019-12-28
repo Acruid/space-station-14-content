@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Content.Server.GameObjects.EntitySystems;
 using Content.Shared.GameObjects.Components.Movement;
@@ -85,7 +85,7 @@ namespace Content.Server.GameObjects.Components.Movement
         {
             if (_teleporterType == TeleporterType.Directed)
             {
-                var userTarget = eventArgs.ClickLocation.ToWorld(_mapManager);
+                var userTarget = eventArgs.ClickLocation.ToWorld(_mapManager, _serverEntityManager);
                 TryDirectedTeleport(eventArgs.User, userTarget);
             }
 
@@ -98,7 +98,7 @@ namespace Content.Server.GameObjects.Components.Movement
         public void TryDirectedTeleport(IEntity user, GridCoordinates grid)
         {
             // Checks
-            if (user.Transform.GridPosition.Distance(_mapManager, grid) > _range)
+            if (user.Transform.GridPosition.Distance(_mapManager, _serverEntityManager, grid) > _range)
             {
                 return;
             }

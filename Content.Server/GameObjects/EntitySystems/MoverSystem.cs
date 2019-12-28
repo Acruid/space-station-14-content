@@ -137,7 +137,7 @@ namespace Content.Server.GameObjects.EntitySystems
                 transform.LocalRotation = mover.VelocityDir.GetDir().ToAngle();
 
                 // Handle footsteps.
-                var distance = transform.GridPosition.Distance(_mapManager, mover.LastPosition);
+                var distance = transform.GridPosition.Distance(_mapManager, EntityManager, mover.LastPosition);
                 mover.StepSoundDistance += distance;
                 mover.LastPosition = transform.GridPosition;
                 float distanceNeeded;

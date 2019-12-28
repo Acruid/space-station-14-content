@@ -20,6 +20,7 @@ namespace Content.Server.GameObjects.Components.Items
         [Dependency] private readonly ITileDefinitionManager _tileDefinitionManager;
         [Dependency] private readonly IEntitySystemManager _entitySystemManager;
         [Dependency] private readonly IMapManager _mapManager;
+        [Dependency] private readonly IEntityManager _entityManager;
 #pragma warning restore 649
 
         public override string Name => "FloorTile";
@@ -45,7 +46,7 @@ namespace Content.Server.GameObjects.Components.Items
             var tile = mapGrid.GetTileRef(eventArgs.ClickLocation);
 
             var coordinates = mapGrid.GridTileToLocal(tile.GridIndices);
-            float distance = coordinates.Distance(_mapManager, Owner.Transform.GridPosition);
+            float distance = coordinates.Distance(_mapManager, _entityManager, Owner.Transform.GridPosition);
 
             if (distance > InteractionSystem.InteractionRange)
             {

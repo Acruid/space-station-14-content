@@ -26,6 +26,7 @@ namespace Content.Server.GameObjects.Components.Weapon.Melee
         [Dependency] private readonly IMapManager _mapManager;
         [Dependency] private readonly IEntitySystemManager _entitySystemManager;
         [Dependency] private readonly IPhysicsManager _physicsManager;
+        [Dependency] private readonly IEntityManager _entityManager;
 #pragma warning restore 649
 
         private int _damage = 1;
@@ -83,8 +84,8 @@ namespace Content.Server.GameObjects.Components.Weapon.Melee
                 return;
             }
             var location = eventArgs.User.Transform.GridPosition;
-            var angle = new Angle(eventArgs.ClickLocation.ToWorld(_mapManager).Position -
-                                  location.ToWorld(_mapManager).Position);
+            var angle = new Angle(eventArgs.ClickLocation.ToWorld(_mapManager, _entityManager).Position -
+                                  location.ToWorld(_mapManager, _entityManager).Position);
 
             // This should really be improved. GetEntitiesInArc uses pos instead of bounding boxes.
             var entities = ArcRayCast(eventArgs.User.Transform.WorldPosition, angle, eventArgs.User);

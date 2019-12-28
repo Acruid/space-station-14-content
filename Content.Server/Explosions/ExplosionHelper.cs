@@ -38,7 +38,7 @@ namespace Content.Server.Explosions
                 //    continue;
                 if (!entity.Transform.IsMapTransform)
                     continue;
-                var distanceFromEntity = (int)entity.Transform.GridPosition.Distance(mapManager, coords);
+                var distanceFromEntity = (int)entity.Transform.GridPosition.Distance(mapManager, serverEntityManager, coords);
                 var exAct = entitySystemManager.GetEntitySystem<ActSystem>();
                 var severity = ExplosionSeverity.Destruction;
                 if (distanceFromEntity < devastationRange)
@@ -70,7 +70,7 @@ namespace Content.Server.Explosions
             {
                 var tileLoc = mapGrid.GridTileToLocal(tile.GridIndices);
                 var tileDef = (ContentTileDefinition)tileDefinitionManager[tile.Tile.TypeId];
-                var distanceFromTile = (int)tileLoc.Distance(mapManager, coords);
+                var distanceFromTile = (int)tileLoc.Distance(mapManager, serverEntityManager, coords);
                 if (!string.IsNullOrWhiteSpace(tileDef.SubFloor))
                 {
                     if (distanceFromTile < devastationRange)
@@ -119,7 +119,7 @@ namespace Content.Server.Explosions
 
             var playerManager = IoCManager.Resolve<IPlayerManager>();
             //var selfPos = Owner.Transform.WorldPosition; //vec2
-            var selfPos = coords.ToWorld(mapManager).Position;
+            var selfPos = coords.ToWorld(mapManager, serverEntityManager).Position;
             foreach (var player in playerManager.GetAllPlayers())
             {
                 if (player.AttachedEntity == null

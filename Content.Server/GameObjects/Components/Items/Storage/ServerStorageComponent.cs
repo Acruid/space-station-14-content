@@ -288,7 +288,7 @@ namespace Content.Server.GameObjects
                     var ourtransform = Owner.GetComponent<ITransformComponent>();
                     var playertransform = playerentity.GetComponent<ITransformComponent>();
 
-                    if (playertransform.GridPosition.InRange(_mapManager, ourtransform.GridPosition, 2)
+                    if (playertransform.GridPosition.InRange(_mapManager, _entityManager, ourtransform.GridPosition, 2)
                         && (ourtransform.IsMapTransform || playertransform.ContainsEntity(ourtransform)))
                     {
                         var remove = (RemoveEntityMessage)message;
