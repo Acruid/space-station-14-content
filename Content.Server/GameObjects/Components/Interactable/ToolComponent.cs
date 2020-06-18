@@ -33,8 +33,14 @@ using Robust.Shared.ViewVariables;
 
 namespace Content.Server.GameObjects.Components.Interactable
 {
+    public interface IToolComponent
+    {
+        ToolQuality Qualities { get; set; }
+    }
+
     [RegisterComponent]
-    public class ToolComponent : SharedToolComponent
+    [ComponentReference(typeof(IToolComponent))]
+    public class ToolComponent : SharedToolComponent, IToolComponent
     {
 #pragma warning disable 649
         [Dependency] private readonly IEntitySystemManager _entitySystemManager;
